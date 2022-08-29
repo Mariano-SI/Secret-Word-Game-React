@@ -18,10 +18,45 @@ const stages = [
 function App() {
   const[gameStage, setGameStage] = useState(stages[0].name);
   const[words] = useState(wordsList);
-  
+
+
+  //Controlar carregamentos das palavras, usarei na função startGame
+  const [pickedWord,setPickedWord] = useState("");
+  const [pickedCategory,setPickedCategory] = useState("");
+  const [letters, setLetters] = [];
+
+  const pickWordAndCategory = ()=>{
+    //random category
+    const categories = Object.keys(words);
+    const category = categories[Math.floor(Math.random() * categories.length)]
+    //console.log(category);
+
+    //random word in picked category
+    const word = words[category][Math.floor(Math.random() * words[category].length)];
+    //console.log(word);
+
+    return{word, category};
+    
+  }
   //Funçao que é executada no evento de clique, ela faz o parametro da  renderização condicional mudar, assim a segunda tela, a do jogo, é carregada.
   const startGame = ()=>{
-    setGameStage(stages[1].name)
+    //pick word and category
+    const {word, category } = pickWordAndCategory(); //destruturing no retorno da função
+    console.log(word, category);
+
+    //create an array of letters of word
+    let wordLetters = word.split("");
+    wordLetters = wordLetters.map((l)=> l.toLowerCase())
+    console.log(wordLetters);
+
+    //setar states
+    setPickedWord(word);
+    setPickedCategory(category);
+    setLetters(wordLetters);
+
+
+    setGameStage(stages[1].name);
+
   }
 
   //Processa a letra no input
