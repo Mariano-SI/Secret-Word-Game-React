@@ -35,9 +35,9 @@
     justify-content: center
 }
 .letterContainer input{
-    height: 50px;
-    width: 50px;
-    font-size: 2em;
+    height: 70px;
+    width: 70px;
+    font-size: 3em;
     text-align: center;
     margin: 2em;
 }
