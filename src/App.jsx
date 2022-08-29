@@ -23,7 +23,7 @@ function App() {
   //Controlar carregamentos das palavras, usarei na função startGame
   const [pickedWord,setPickedWord] = useState("");
   const [pickedCategory,setPickedCategory] = useState("");
-  const [letters, setLetters] = [];
+  const [letters, setLetters] = useState([]) ;
 
   const pickWordAndCategory = ()=>{
     //random category
