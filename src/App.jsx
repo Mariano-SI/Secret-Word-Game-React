@@ -40,7 +40,7 @@ function App() {
       words[category][Math.floor(Math.random() * words[category].length)];
     console.log(word);
 
-    return {word, category };
+    return { word, category };
   };
   //Funçao que é executada no evento de clique, ela faz o parametro da  renderização condicional mudar, assim a segunda tela, a do jogo, é carregada.
   const startGame = () => {
@@ -64,7 +64,24 @@ function App() {
   //Processa a letra no input
   const verifyLetter = (letter) => {
 
-    console.log(letter);
+    //padronizar para minusculo(padrão das palavras vindas do objeto)
+    const normalizedLetter = letter.toLowerCase();
+    console.log(normalizedLetter);
+
+    //checar se a letra ja foi utilizada antes
+    if(letrasAdivinhadas.includes(normalizedLetter)||letrasErradas.includes(normalizedLetter)){
+      return;
+    }
+
+
+    //!incluindo a letra em sei array certo após a jogada(battisti fez de outro jeito)
+    if(letters.includes(normalizedLetter)){
+      letrasAdivinhadas.push(normalizedLetter);
+    }else{
+      letrasErradas.push(normalizedLetter); 
+      setTentativas((tentativas)=> tentativas-1);
+    };
+    console.log(letrasAdivinhadas)
   };
 
   const retry = () => {
