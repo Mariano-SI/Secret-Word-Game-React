@@ -15,6 +15,8 @@ const stages = [
   { id: 3, name: "end" },
 ];
 
+const numTentativas = 3;
+
 function App() {
   const [gameStage, setGameStage] = useState(stages[0].name);
   const [words] = useState(wordsList);
@@ -26,7 +28,7 @@ function App() {
 
   const [letrasAdivinhadas, setLetrasAdivinhadas] = useState([]);
   const [letrasErradas, setLetrasErradas] = useState([]);
-  const [tentativas, setTentativas] = useState(3); //nmumero de tentativas
+  const [tentativas, setTentativas] = useState(numTentativas); //nmumero de tentativas
   const [pontuacao, setPontuacao] = useState(0);
 
   const pickWordAndCategory = () => {
@@ -74,17 +76,32 @@ function App() {
     }
 
 
-    //!incluindo a letra em sei array certo após a jogada(battisti fez de outro jeito)
+    //incluindo a letra em seu array certo após a jogada
     if(letters.includes(normalizedLetter)){
       letrasAdivinhadas.push(normalizedLetter);
     }else{
       letrasErradas.push(normalizedLetter); 
-      setTentativas((tentativas)=> tentativas-1);
+      setTentativas((tentativas)=> tentativas-1);//diminuo as tentativas
     };
     console.log(letrasAdivinhadas)
+    console.log(letrasErradas);
   };
 
+  const clearLetterStates = ()=>{
+    setLetrasAdivinhadas([]);
+    setLetrasErradas([]);
+  }
+  //Encerrando e resetando o game automaticamente, useEffect monitora uma variavel, e aplicamos logica nisso
+  useEffect(()=>{
+    if (tentativas<=0) {
+      clearLetterStates();
+      setGameStage(stages[2].name);
+    }
+  },[tentativas])
+
   const retry = () => {
+    setPontuacao(0);
+    setTentativas(numTentativas);
     setGameStage(stages[0].name);
   };
   return (
