@@ -31,7 +31,7 @@ function App() {
   const [tentativas, setTentativas] = useState(numTentativas); //nmumero de tentativas
   const [pontuacao, setPontuacao] = useState(0);
 
-  const pickWordAndCategory = () => {
+  const pickWordAndCategory = useCallback(() => {
     //random category
     const categories = Object.keys(words);
     const category = categories[Math.floor(Math.random() * categories.length)];
@@ -40,20 +40,23 @@ function App() {
     //random word in picked category
     const word =
       words[category][Math.floor(Math.random() * words[category].length)];
-    console.log(word);
+      //console.log(word);
 
     return { word, category };
-  };
+  },[words]);
   //Funçao que é executada no evento de clique, ela faz o parametro da  renderização condicional mudar, assim a segunda tela, a do jogo, é carregada.
-  const startGame = () => {
+  const startGame = useCallback(() => {
+
+    clearLetterStates();
+
     //pick word and category
     const { word, category } = pickWordAndCategory(); //destruturing no retorno da função
-    console.log(word, category);
+    //console.log(word, category);
 
     //create an array of letters of word
     let wordLetters = word.split("");
     wordLetters = wordLetters.map((l) => l.toLowerCase());
-    console.log(wordLetters);
+    //console.log(wordLetters);
 
     //setar states
     setPickedWord(word);
@@ -61,43 +64,68 @@ function App() {
     setLetters(wordLetters);
 
     setGameStage(stages[1].name);
-  };
+  }, [pickWordAndCategory]);
 
   //Processa a letra no input
   const verifyLetter = (letter) => {
-
     //padronizar para minusculo(padrão das palavras vindas do objeto)
     const normalizedLetter = letter.toLowerCase();
-    console.log(normalizedLetter);
+    //console.log(normalizedLetter);
 
     //checar se a letra ja foi utilizada antes
-    if(letrasAdivinhadas.includes(normalizedLetter)||letrasErradas.includes(normalizedLetter)){
+    if (
+      letrasAdivinhadas.includes(normalizedLetter) ||
+      letrasErradas.includes(normalizedLetter)
+    ) {
       return;
     }
 
-
     //incluindo a letra em seu array certo após a jogada
-    if(letters.includes(normalizedLetter)){
-      letrasAdivinhadas.push(normalizedLetter);
-    }else{
-      letrasErradas.push(normalizedLetter); 
-      setTentativas((tentativas)=> tentativas-1);//diminuo as tentativas
-    };
-    console.log(letrasAdivinhadas)
-    console.log(letrasErradas);
+    if (letters.includes(normalizedLetter)) {
+      setLetrasAdivinhadas((actualGuessedLetters) => [
+        ...actualGuessedLetters,
+        letter,
+      ]);
+    } else {
+      setLetrasErradas((actualWrongLetters) => [
+        ...actualWrongLetters,
+        normalizedLetter,
+      ]);
+
+      setTentativas((tentativas) => tentativas - 1); //diminuo as tentativas
+    }
+    //console.log(`Letras adivinhadas: ${letrasAdivinhadas}`);
+    //console.log(`Letras erradas: ${letrasErradas}`);
   };
 
-  const clearLetterStates = ()=>{
+  const clearLetterStates = () => {
     setLetrasAdivinhadas([]);
     setLetrasErradas([]);
-  }
+  };
   //Encerrando e resetando o game automaticamente, useEffect monitora uma variavel, e aplicamos logica nisso
-  useEffect(()=>{
-    if (tentativas<=0) {
+  //condição de derrota
+  useEffect(() => {
+    if (tentativas <= 0) {
       clearLetterStates();
       setGameStage(stages[2].name);
     }
-  },[tentativas])
+  }, [tentativas]);
+
+  //condição de vitória
+  useEffect(() => {
+    const letrasUnicas = [...new Set(letters)];
+    //console.log(letrasUnicas);
+
+    //letrasAdivinhadas não repete elementos, nem letras unicas, então se seus tamanhos são iguais é porque seus elementos batem, entao:
+
+    if (letrasUnicas.length === letrasAdivinhadas.length && gameStage === stages[1].name) {
+      //acrescenta pontos
+      setPontuacao((actualScore)=>actualScore+=100);
+      //gera nova palavra
+     
+      startGame();
+    }
+  }, [letrasAdivinhadas, startGame, letters]);
 
   const retry = () => {
     setPontuacao(0);
@@ -120,7 +148,7 @@ function App() {
           pontuacao={pontuacao}
         />
       )}
-      {gameStage === "end" && <GameEnd retry={retry} />}
+      {gameStage === "end" && <GameEnd retry={retry} pontuacao={pontuacao} />}
     </div>
   );
 }
