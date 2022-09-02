@@ -1,7 +1,8 @@
 # Secret-Word-Game-React
 <h1>Jogo de adivinhar palavras baseado em uma dica feito com React</h1>
 <h2>Tela de início</h2>
-![image](https://user-images.githubusercontent.com/76002553/188039130-82cafa67-6821-4653-a8a8-dbce2f5e3552.png)
+![image](https://user-images.githubusercontent.com/76002553/188040090-352f754c-9cd1-4203-91f8-95e3433a6313.png)
+
 <h2>Tela do jogo</h2>
 <p>Esta é a tela onde o jogo funciona, nela é sorteada uma categoria e uma palavra aleatóriamente onde, por padrão, o usuário tem 3 tentativas para acertar as letras que compoem a palavra.
 Caso ele acerte, outra palavra é sorteada e o jogo continua.</p>
